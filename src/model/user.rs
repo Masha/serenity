@@ -1319,6 +1319,9 @@ mod test {
         let user = UserOpt {
             discriminator: Some(123),
         };
+        let user2 = UserOpt {
+            discriminator: None
+        };
         assert_tokens(&user, &[
             Token::Struct {
                 name: "UserOpt",
@@ -1327,6 +1330,15 @@ mod test {
             Token::Str("discriminator"),
             Token::Some,
             Token::Str("0123"),
+            Token::StructEnd,
+        ]);
+        assert_tokens(&user2, &[
+            Token::Struct {
+                name: "UserOpt",
+                len: 1,
+            },
+            Token::Str("discriminator"),
+            Token::None,
             Token::StructEnd,
         ]);
         assert_de_tokens(&user, &[

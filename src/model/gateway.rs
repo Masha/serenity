@@ -204,6 +204,7 @@ pub struct ClientStatus {
 
 /// Information about the user of a [`Presence`] event.
 #[derive(Clone, Debug, Deserialize, Serialize)]
+#[serde_with::skip_serializing_none]
 #[non_exhaustive]
 pub struct PresenceUser {
     pub id: UserId,
