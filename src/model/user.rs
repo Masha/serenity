@@ -85,80 +85,6 @@ pub(crate) mod discriminator {
             s.parse().map_err(Error::custom)
         }
     }
-
-    /// Used with `#[serde(with|deserialize_with|serialize_with)]`
-    ///
-    /// # Examples
-    ///
-    /// ```rust,ignore
-    /// #[derive(Deserialize, Serialize)]
-    /// struct A {
-    ///     #[serde(with = "discriminator::option")]
-    ///     id: Option<u16>,
-    /// }
-    ///
-    /// #[derive(Deserialize)]
-    /// struct B {
-    ///     #[serde(deserialize_with = "discriminator::option::deserialize")]
-    ///     id: Option<u16>,
-    /// }
-    ///
-    /// #[derive(Serialize)]
-    /// struct C {
-    ///     #[serde(serialize_with = "discriminator::option::serialize")]
-    ///     id: Option<u16>,
-    /// }
-    /// ```
-    pub(crate) mod option {
-        use std::fmt;
-
-        use serde::de::{Error, Visitor};
-        use serde::{Deserializer, Serializer};
-
-        use super::DiscriminatorVisitor;
-
-        pub fn deserialize<'de, D: Deserializer<'de>>(
-            deserializer: D,
-        ) -> Result<Option<u16>, D::Error> {
-            deserializer.deserialize_option(OptionalDiscriminatorVisitor)
-        }
-
-        #[allow(clippy::trivially_copy_pass_by_ref)]
-        pub fn serialize<S: Serializer>(
-            value: &Option<u16>,
-            serializer: S,
-        ) -> Result<S::Ok, S::Error> {
-            match value {
-                Some(value) => serializer.serialize_some(&format_args!("{:04}", value)),
-                None => serializer.serialize_none(),
-            }
-        }
-
-        struct OptionalDiscriminatorVisitor;
-
-        impl<'de> Visitor<'de> for OptionalDiscriminatorVisitor {
-            type Value = Option<u16>;
-
-            fn expecting(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
-                formatter.write_str("optional string or integer discriminator")
-            }
-
-            fn visit_none<E: Error>(self) -> Result<Self::Value, E> {
-                Ok(None)
-            }
-
-            fn visit_unit<E: Error>(self) -> Result<Self::Value, E> {
-                Ok(None)
-            }
-
-            fn visit_some<D: Deserializer<'de>>(
-                self,
-                deserializer: D,
-            ) -> Result<Self::Value, D::Error> {
-                Ok(Some(deserializer.deserialize_any(DiscriminatorVisitor)?))
-            }
-        }
-    }
 }
 
 /// Information about the current user.
@@ -1271,12 +1197,6 @@ mod test {
             #[serde(with = "discriminator")]
             discriminator: u16,
         }
-        #[derive(Debug, PartialEq, Deserialize, Serialize)]
-        struct UserOpt {
-            #[serde(with = "discriminator::option")]
-            discriminator: Option<u16>,
-        }
-
         let user = User {
             discriminator: 123,
         };
@@ -1295,30 +1215,6 @@ mod test {
                 len: 1,
             },
             Token::Str("discriminator"),
-            Token::U16(123),
-            Token::StructEnd,
-        ]);
-
-        let user = UserOpt {
-            discriminator: Some(123),
-        };
-        assert_tokens(&user, &[
-            Token::Struct {
-                name: "UserOpt",
-                len: 1,
-            },
-            Token::Str("discriminator"),
-            Token::Some,
-            Token::Str("0123"),
-            Token::StructEnd,
-        ]);
-        assert_de_tokens(&user, &[
-            Token::Struct {
-                name: "UserOpt",
-                len: 1,
-            },
-            Token::Str("discriminator"),
-            Token::Some,
             Token::U16(123),
             Token::StructEnd,
         ]);

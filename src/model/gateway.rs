@@ -209,8 +209,6 @@ pub struct PresenceUser {
     pub id: UserId,
     pub avatar: Option<String>,
     pub bot: Option<bool>,
-    #[serde(with = "discriminator::option")]
-    pub discriminator: Option<u16>,
     pub email: Option<String>,
     pub mfa_enabled: Option<bool>,
     #[serde(rename = "username")]
@@ -228,7 +226,7 @@ impl PresenceUser {
         Some(User {
             avatar: self.avatar,
             bot: self.bot?,
-            discriminator: self.discriminator?,
+            discriminator: 0,
             id: self.id,
             name: self.name?,
             public_flags: self.public_flags,
@@ -247,7 +245,7 @@ impl PresenceUser {
         Some(User {
             avatar: self.avatar.clone(),
             bot: self.bot?,
-            discriminator: self.discriminator?,
+            discriminator: 0,
             id: self.id,
             name: self.name.clone()?,
             public_flags: self.public_flags,
@@ -263,7 +261,6 @@ impl PresenceUser {
             self.avatar = Some(avatar.clone());
         }
         self.bot = Some(user.bot);
-        self.discriminator = Some(user.discriminator);
         self.name = Some(user.name.clone());
         if let Some(public_flags) = user.public_flags {
             self.public_flags = Some(public_flags);
