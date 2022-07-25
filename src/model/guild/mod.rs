@@ -507,19 +507,6 @@ impl Guild {
         dmd: u8,
         reason: &str,
     ) -> Result<()> {
-        #[cfg(feature = "cache")]
-        {
-            if let Some(cache) = cache_http.cache() {
-                let req = Permissions::BAN_MEMBERS;
-
-                if !self.has_perms(&cache_http, req).await {
-                    return Err(Error::Model(ModelError::InvalidPermissions(req)));
-                }
-
-                self.check_hierarchy(cache, user)?;
-            }
-        }
-
         self.id.ban_with_reason(cache_http.http(), user, dmd, reason).await
     }
 
@@ -540,17 +527,6 @@ impl Guild {
     ///
     /// [Ban Members]: Permissions::BAN_MEMBERS
     pub async fn bans(&self, cache_http: impl CacheHttp) -> Result<Vec<Ban>> {
-        #[cfg(feature = "cache")]
-        {
-            if cache_http.cache().is_some() {
-                let req = Permissions::BAN_MEMBERS;
-
-                if !self.has_perms(&cache_http, req).await {
-                    return Err(Error::Model(ModelError::InvalidPermissions(req)));
-                }
-            }
-        }
-
         self.id.bans(cache_http.http()).await
     }
 
@@ -1160,17 +1136,6 @@ impl Guild {
         cache_http: impl CacheHttp,
         new_nickname: Option<&str>,
     ) -> Result<()> {
-        #[cfg(feature = "cache")]
-        {
-            if cache_http.cache().is_some() {
-                let req = Permissions::CHANGE_NICKNAME;
-
-                if !self.has_perms(&cache_http, req).await {
-                    return Err(Error::Model(ModelError::InvalidPermissions(req)));
-                }
-            }
-        }
-
         self.id.edit_nickname(cache_http.http(), new_nickname).await
     }
 
@@ -1473,17 +1438,6 @@ impl Guild {
     ///
     /// [Manage Guild]: Permissions::MANAGE_GUILD
     pub async fn invites(&self, cache_http: impl CacheHttp) -> Result<Vec<RichInvite>> {
-        #[cfg(feature = "cache")]
-        {
-            if cache_http.cache().is_some() {
-                let req = Permissions::MANAGE_GUILD;
-
-                if !self.has_perms(&cache_http, req).await {
-                    return Err(Error::Model(ModelError::InvalidPermissions(req)));
-                }
-            }
-        }
-
         self.id.invites(cache_http.http()).await
     }
 
@@ -2137,17 +2091,6 @@ impl Guild {
     /// [`Error::Http`]: crate::error::Error::Http
     /// [`Error::Json`]: crate::error::Error::Json
     pub async fn prune_count(&self, cache_http: impl CacheHttp, days: u8) -> Result<GuildPrune> {
-        #[cfg(feature = "cache")]
-        {
-            if cache_http.cache().is_some() {
-                let req = Permissions::KICK_MEMBERS;
-
-                if !self.has_perms(&cache_http, req).await {
-                    return Err(Error::Model(ModelError::InvalidPermissions(req)));
-                }
-            }
-        }
-
         self.id.prune_count(cache_http.http(), days).await
     }
 
@@ -2405,17 +2348,6 @@ impl Guild {
     /// [`Error::Http`]: crate::error::Error::Http
     /// [`Error::Json`]: crate::error::Error::Json
     pub async fn start_prune(&self, cache_http: impl CacheHttp, days: u8) -> Result<GuildPrune> {
-        #[cfg(feature = "cache")]
-        {
-            if cache_http.cache().is_some() {
-                let req = Permissions::KICK_MEMBERS;
-
-                if !self.has_perms(&cache_http, req).await {
-                    return Err(Error::Model(ModelError::InvalidPermissions(req)));
-                }
-            }
-        }
-
         self.id.start_prune(cache_http.http(), days).await
     }
 
@@ -2437,17 +2369,6 @@ impl Guild {
         cache_http: impl CacheHttp,
         user_id: impl Into<UserId>,
     ) -> Result<()> {
-        #[cfg(feature = "cache")]
-        {
-            if cache_http.cache().is_some() {
-                let req = Permissions::BAN_MEMBERS;
-
-                if !self.has_perms(&cache_http, req).await {
-                    return Err(Error::Model(ModelError::InvalidPermissions(req)));
-                }
-            }
-        }
-
         self.id.unban(&cache_http.http(), user_id).await
     }
 

@@ -35,19 +35,6 @@ impl<'a> CreateSticker<'a> {
     #[cfg(feature = "http")]
     #[inline]
     pub async fn execute(self, cache_http: impl CacheHttp, guild_id: GuildId) -> Result<Sticker> {
-        #[cfg(feature = "cache")]
-        {
-            if let Some(cache) = cache_http.cache() {
-                if let Some(guild) = cache.guild(guild_id) {
-                    let req = Permissions::MANAGE_EMOJIS_AND_STICKERS;
-
-                    if !guild.has_perms(&cache_http, req).await {
-                        return Err(Error::Model(ModelError::InvalidPermissions(req)));
-                    }
-                }
-            }
-        }
-
         self._execute(cache_http.http(), guild_id).await
     }
 

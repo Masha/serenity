@@ -103,24 +103,6 @@ impl Reaction {
         #[cfg_attr(not(feature = "cache"), allow(unused_mut))]
         let mut user_id = self.user_id;
 
-        #[cfg(feature = "cache")]
-        {
-            if let Some(cache) = cache_http.cache() {
-                if self.user_id == Some(cache.current_user().id) {
-                    user_id = None;
-                }
-
-                if user_id.is_some() {
-                    crate::utils::user_has_perms_cache(
-                        cache,
-                        self.channel_id,
-                        self.guild_id,
-                        Permissions::MANAGE_MESSAGES,
-                    )?;
-                }
-            }
-        }
-
         cache_http
             .http()
             .delete_reaction(
@@ -147,17 +129,6 @@ impl Reaction {
     /// [Manage Messages]: Permissions::MANAGE_MESSAGES
     /// [permissions]: super::permissions
     pub async fn delete_all(&self, cache_http: impl CacheHttp) -> Result<()> {
-        #[cfg(feature = "cache")]
-        {
-            if let Some(cache) = cache_http.cache() {
-                crate::utils::user_has_perms_cache(
-                    cache,
-                    self.channel_id,
-                    self.guild_id,
-                    Permissions::MANAGE_MESSAGES,
-                )?;
-            }
-        }
         cache_http
             .http()
             .as_ref()

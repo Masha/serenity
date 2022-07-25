@@ -72,26 +72,6 @@ impl EditChannel {
         channel_id: ChannelId,
         #[cfg(feature = "cache")] guild_id: Option<GuildId>,
     ) -> Result<GuildChannel> {
-        #[cfg(feature = "cache")]
-        {
-            if let Some(cache) = cache_http.cache() {
-                crate::utils::user_has_perms_cache(
-                    cache,
-                    channel_id,
-                    guild_id,
-                    Permissions::MANAGE_CHANNELS,
-                )?;
-                if self.permission_overwrites.is_some() {
-                    crate::utils::user_has_perms_cache(
-                        cache,
-                        channel_id,
-                        guild_id,
-                        Permissions::MANAGE_ROLES,
-                    )?;
-                }
-            }
-        }
-
         self._execute(cache_http.http(), channel_id).await
     }
 

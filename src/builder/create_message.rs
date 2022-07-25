@@ -95,17 +95,6 @@ impl<'a> CreateMessage<'a> {
         channel_id: ChannelId,
         #[cfg(feature = "cache")] guild_id: Option<GuildId>,
     ) -> Result<Message> {
-        #[cfg(feature = "cache")]
-        {
-            let mut req = Permissions::SEND_MESSAGES;
-            if !self.files.is_empty() {
-                req |= Permissions::ATTACH_FILES;
-            }
-            if let Some(cache) = cache_http.cache() {
-                crate::utils::user_has_perms_cache(cache, channel_id, guild_id, req)?;
-            }
-        }
-
         self._execute(cache_http.http(), channel_id).await
     }
 

@@ -93,19 +93,6 @@ impl Invite {
     /// [Manage Guild]: Permissions::MANAGE_GUILD
     /// [permission]: super::permissions
     pub async fn delete(&self, cache_http: impl CacheHttp) -> Result<Invite> {
-        #[cfg(feature = "cache")]
-        {
-            if let Some(cache) = cache_http.cache() {
-                let guild_id = self.guild.as_ref().map(|g| g.id);
-                crate::utils::user_has_perms_cache(
-                    cache,
-                    self.channel.id,
-                    guild_id,
-                    Permissions::MANAGE_GUILD,
-                )?;
-            }
-        }
-
         cache_http.http().as_ref().delete_invite(&self.code).await
     }
 
@@ -311,20 +298,6 @@ impl RichInvite {
     /// [Manage Guild]: Permissions::MANAGE_GUILD
     /// [permission]: super::permissions
     pub async fn delete(&self, cache_http: impl CacheHttp) -> Result<Invite> {
-        #[cfg(feature = "cache")]
-        {
-            if let Some(cache) = cache_http.cache() {
-                let guild_id = self.guild.as_ref().map(|g| g.id);
-
-                crate::utils::user_has_perms_cache(
-                    cache,
-                    self.channel.id,
-                    guild_id,
-                    Permissions::MANAGE_GUILD,
-                )?;
-            }
-        }
-
         cache_http.http().as_ref().delete_invite(&self.code).await
     }
 

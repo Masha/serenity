@@ -387,21 +387,6 @@ impl Member {
     ///
     /// [Kick Members]: Permissions::KICK_MEMBERS
     pub async fn kick_with_reason(&self, cache_http: impl CacheHttp, reason: &str) -> Result<()> {
-        #[cfg(feature = "cache")]
-        {
-            if let Some(cache) = cache_http.cache() {
-                if let Some(guild) = cache.guilds.get(&self.guild_id) {
-                    let req = Permissions::KICK_MEMBERS;
-
-                    if !guild.has_perms(&cache_http, req).await {
-                        return Err(Error::Model(ModelError::InvalidPermissions(req)));
-                    }
-
-                    guild.check_hierarchy(cache, self.user.id)?;
-                }
-            }
-        }
-
         self.guild_id.kick_with_reason(cache_http.http(), self.user.id, reason).await
     }
 

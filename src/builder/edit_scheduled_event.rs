@@ -47,19 +47,6 @@ impl EditScheduledEvent {
         guild_id: GuildId,
         event_id: ScheduledEventId,
     ) -> Result<ScheduledEvent> {
-        #[cfg(feature = "cache")]
-        {
-            if let Some(cache) = cache_http.cache() {
-                if let Some(guild) = cache.guild(guild_id) {
-                    let req = Permissions::MANAGE_EVENTS;
-
-                    if !guild.has_perms(&cache_http, req).await {
-                        return Err(Error::Model(ModelError::InvalidPermissions(req)));
-                    }
-                }
-            }
-        }
-
         self._execute(cache_http.http(), guild_id, event_id).await
     }
 

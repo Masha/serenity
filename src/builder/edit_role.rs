@@ -80,19 +80,6 @@ impl EditRole {
         guild_id: GuildId,
         role_id: Option<RoleId>,
     ) -> Result<Role> {
-        #[cfg(feature = "cache")]
-        {
-            if let Some(cache) = cache_http.cache() {
-                if let Some(guild) = cache.guild(guild_id) {
-                    let req = Permissions::MANAGE_ROLES;
-
-                    if !guild.has_perms(&cache_http, req).await {
-                        return Err(Error::Model(ModelError::InvalidPermissions(req)));
-                    }
-                }
-            }
-        }
-
         self._execute(cache_http.http(), guild_id, role_id).await
     }
 

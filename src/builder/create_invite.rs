@@ -103,18 +103,6 @@ impl CreateInvite {
         channel_id: ChannelId,
         #[cfg(feature = "cache")] guild_id: Option<GuildId>,
     ) -> Result<RichInvite> {
-        #[cfg(feature = "cache")]
-        {
-            if let Some(cache) = cache_http.cache() {
-                crate::utils::user_has_perms_cache(
-                    cache,
-                    channel_id,
-                    guild_id,
-                    Permissions::CREATE_INSTANT_INVITE,
-                )?;
-            }
-        }
-
         self._execute(cache_http.http(), channel_id).await
     }
 

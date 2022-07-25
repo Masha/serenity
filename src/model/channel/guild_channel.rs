@@ -299,18 +299,6 @@ impl GuildChannel {
     ///
     /// [Manage Channels]: Permissions::MANAGE_CHANNELS
     pub async fn delete(&self, cache_http: impl CacheHttp) -> Result<Channel> {
-        #[cfg(feature = "cache")]
-        {
-            if let Some(cache) = cache_http.cache() {
-                crate::utils::user_has_perms_cache(
-                    cache,
-                    self.id,
-                    Some(self.guild_id),
-                    Permissions::MANAGE_CHANNELS,
-                )?;
-            }
-        }
-
         self.id.delete(&cache_http.http()).await
     }
 
