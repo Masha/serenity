@@ -50,11 +50,11 @@ impl CreateChannel {
     ) -> Result<GuildChannel> {
         #[cfg(feature = "cache")]
         {
-            if let Some(cache) = cache_http.cache() {
+            if let Some(cache) = cache_http.cache().cloned() {
                 if let Some(guild) = cache.guild(guild_id) {
                     let req = Permissions::MANAGE_CHANNELS;
 
-                    if !guild.clone().has_perms(&cache_http, req).await {
+                    if !guild.has_perms(&cache_http, req).await {
                         return Err(Error::Model(ModelError::InvalidPermissions(req)));
                     }
                 }
