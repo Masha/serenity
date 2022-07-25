@@ -51,7 +51,7 @@ impl CreateChannel {
         #[cfg(feature = "cache")]
         {
             if let Some(cache) = cache_http.cache() {
-                if let Some(guild) = cache.guild(guild_id).cloned() {
+                if let Some(guild) = cache.guild(guild_id).clone() {
                     let req = Permissions::MANAGE_CHANNELS;
 
                     if !guild.has_perms(&cache_http, req).await {
